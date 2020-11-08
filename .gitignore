@@ -1,0 +1,14 @@
+/.idea
+/target/default
+/target/default+test+test
+/target/uberjar/**
+!/target/uberjar/*-standalone.jar
+/classes
+/checkouts
+profiles.clj
+pom.xml
+pom.xml.asc
+*.class
+/.lein-*
+/.nrepl-port
+/.prepl-port
