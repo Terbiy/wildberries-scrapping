@@ -1,8 +1,9 @@
 # Wildberries Scrapping
 
-Данное ПО необходимо для анализа скидок на бренды в рамках маркетинговых кампаний на сайте Wildberries.
+Данное ПО необходимо для анализа скидок на бренды на сайте Wildberries.
 
-Результатом выполнения программы является текстовая строка, которая может быть сохранена средствами командной строки в файл формата `tsv`.
+Результатом выполнения программы является текстовая строка, которая может быть сохранена средствами командной оболочки в файл формата `tsv`. Смотри [пример](#пример).
+
 Затем содержимое файла можно скопировать и вставить напрямую в Excel.
 
 ## Использование
@@ -11,20 +12,23 @@
 
 Для использования скомпилированной программы необходимо сохранить наиболее свежий файл из папки `target/uberjars`.
 
-    $ java -jar wildberries-scrapping-<версия программы>-standalone.jar --campaign <название кампании в адресной строке> --brands <идентификаторы брендов, разделённые ;>
+    $ java -jar wildberries-scrapping-<версия программы>-standalone.jar --url <адрес страницы с параметром brand>
 
 ## Пример
 
-Мы хотим посмотреть скидки с акции «Всемирный День Шопинга» для брендов ZARINA и Zolla.
+Мы хотим посмотреть скидки для брендов Befree, Mango, ZARINA и Zolla.
 
-На сайте они располагаются по следующей ссылке: https://www.wildberries.ru/promotions/vsemirniy-den-shopinga?brand=14130;75918.
-Значит, два требуемых аргумента у нас будут следующими:
- * `--campaign "vsemirniy-den-shopinga"`
- * `--brands "14130;75918"`
+На сайте они располагаются по следующей ссылке: https://www.wildberries.ru/catalog/zhenshchinam/odezhda?brand=4126;2513;4130;65918.
 
 Итоговая команда будет выглядеть следующим образом:
 
-    $ java -jar wildberries-scrapping-0.1.0-standalone.jar --campaign "vsemirniy-den-shopinga" --brands "14130;75918"
+    $ java -jar wildberries-scrapping-0.1.0-standalone.jar --url "https://www.wildberries.ru/catalog/zhenshchinam/odezhda?brand=4126;2513;4130;65918"
+
+Сохранение в файл можно осуществить следующим образом:
+
+    $ java -jar wildberries-scrapping-0.1.0-standalone.jar --url "https://www.wildberries.ru/catalog/zhenshchinam/odezhda?brand=4126;2513;4130;65918" > ~/wildberries-data.tsv
+
+Таким образом вся информация окажется в файле `wildberries-data.tsv` в домашней директории.
 
 ## Лицензия
 
