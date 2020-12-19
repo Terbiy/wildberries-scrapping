@@ -12,7 +12,7 @@
 
 Для использования скомпилированной программы необходимо сохранить наиболее свежий файл из папки `target/uberjars`.
 
-    $ java -jar wildberries-scrapping-<версия программы>-standalone.jar --url <адрес страницы с параметром brand>
+    $ java -jar wildberries-scrapping-<версия программы>-standalone.jar --url <адрес страницы с параметром brand или fbrand>
 
 ## Пример
 

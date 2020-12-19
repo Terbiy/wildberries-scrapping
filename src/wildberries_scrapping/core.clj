@@ -1,8 +1,11 @@
 (ns wildberries-scrapping.core
   (:gen-class)
-  (:require [clojure.string :refer [split join]]
+  (:require [clojure.string :refer [split join includes?]]
             [lambdaisland.uri :as uri])
   (:import (org.jsoup Jsoup HttpStatusException)))
+
+;; TODO: Закончить с :brand и :fbrand.
+(def ^:dynamic *brand-signature* :brand)
 
 (def PROPERTIES_SEPARATOR "\t")
 
@@ -55,19 +58,21 @@
 (defn build-url-with-page
   [url brand page]
   (-> url
-      (uri/assoc-query :brand brand :page page)
+      (uri/assoc-query *brand-signature* brand :page page)
       .toString))
 
 (def INITIAL_PAGE 1)
 
 (defn split-brands [brands-string] (split brands-string #";"))
 
+(defn extract-brands [query-map] (get query-map *brand-signature*))
+
 (defn get-discounts
   [url]
   (let [url (uri/parse url)
         brands (-> url
                    uri/query-map
-                   :brand
+                   extract-brands
                    split-brands)]
     (loop [brands brands
            page INITIAL_PAGE
@@ -80,16 +85,24 @@
                 (recur (rest brands) INITIAL_PAGE (concat all-titles titles))
               :else (recur brands (inc page) (concat all-titles titles)))))))
 
+(defn define-brand-signature
+  [url]
+  (println url)
+  (cond (includes? url "fbrand") :fbrand
+        (includes? url "brand") :brand
+        :else nil))
+
 (defn get-url [args] (get args "--url"))
 
 (defn -main
   [& args]
   (let [map-args (apply hash-map args)
         url (get-url map-args)]
-    (if url
-      (->> url
-           get-discounts
-           (join GOODS_SEPARATOR)
-           println)
-      (println
-        "Команда вводится в формате --url \"https://www.wildberries.ru/promotions/cyber-monday-odezhda-obuv-i-aksessuary?brand=14126;4077;4890;14130;75918\""))))
+    (binding [*brand-signature* (define-brand-signature url)]
+      (if (and url *brand-signature*)
+        (->> url
+             get-discounts
+             (join GOODS_SEPARATOR)
+             println)
+        (println
+          "Команда вводится в формате --url \"https://www.wildberries.ru/promotions/cyber-monday-odezhda-obuv-i-aksessuary?brand=14126;4077;4890;14130;75918\"")))))
