@@ -4,7 +4,6 @@
             [lambdaisland.uri :as uri])
   (:import (org.jsoup Jsoup HttpStatusException)))
 
-;; TODO: Закончить с :brand и :fbrand.
 (def ^:dynamic *brand-signature* :brand)
 
 (def PROPERTIES_SEPARATOR "\t")
@@ -87,7 +86,6 @@
 
 (defn define-brand-signature
   [url]
-  (println url)
   (cond (includes? url "fbrand") :fbrand
         (includes? url "brand") :brand
         :else nil))
@@ -105,4 +103,4 @@
              (join GOODS_SEPARATOR)
              println)
         (println
-          "Команда вводится в формате --url \"https://www.wildberries.ru/promotions/cyber-monday-odezhda-obuv-i-aksessuary?brand=14126;4077;4890;14130;75918\"")))))
+          "Для работы программы необходимо предоставить адрес каталога Wildberries. Например, https://www.wildberries.ru/catalog/obuv/zhenskaya/sapogi?fbrand=16821;9465;20587;9974;15521;20250;11496;15852;30269.")))))
