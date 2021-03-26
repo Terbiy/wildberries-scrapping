@@ -1,6 +1,6 @@
 (ns wildberries-scrapping.core
   (:gen-class)
-  (:require [clojure.string :refer [split join includes?]]
+  (:require [clojure.string :refer [split join includes? trim] :as string]
             [lambdaisland.uri :as uri])
   (:import (org.jsoup Jsoup HttpStatusException)))
 
@@ -16,14 +16,39 @@
   [brands titles]
   (and (= (count brands) 1) (brand-iterated? titles)))
 
+(defn try-to-select [select] (try (select) (catch NullPointerException _ "")))
+
 (defn get-property
   [good property]
-  (try (-> good
-           (.select property)
-           .textNodes
-           first
-           .toString)
-       (catch NullPointerException _ "")))
+  (try-to-select #(-> good
+                      (.select property)
+                      .textNodes
+                      first
+                      .toString
+                      trim)))
+
+(defn get-comments-number [good] (get-property good ".dtList-comments-count"))
+
+(defn extract-rating-value
+  [classes]
+  (string/replace (->> classes
+                       (filter #(re-matches #"star\d" %))
+                       first)
+                  #"star"
+                  ""))
+
+(defn get-rating
+  [good]
+  (try-to-select #(-> good
+                      (.select "[itemprop=\"aggregateRating\"]")
+                      .first
+                      .classNames
+                      extract-rating-value)))
+
+(defn get-price
+  [good]
+  (-> (get-property good ".lower-price")
+      (string/replace #"(&nbsp;|₽)" "")))
 
 (defn get-discount [good] (get-property good ".price-sale"))
 
@@ -31,12 +56,17 @@
 
 (defn get-brand [good] (get-property good ".brand-name"))
 
-(defn extract-discount
-  [good]
-  (join PROPERTIES_SEPARATOR
-        [(get-brand good) (get-name good) (get-discount good)]))
+(def COLUMNS
+  ["Бренд" "Наименование" "Размер скидки" "Стоимость со скидкой" "Рейтинг"
+   "Количество отзывов"])
+(def COLUMNS_PARSERS
+  [get-brand get-name get-discount get-price get-rating get-comments-number])
 
-(defn extract-discounts [goods] (map extract-discount goods))
+(defn stringify-row [data] (join PROPERTIES_SEPARATOR data))
+
+(defn extract-good-data [good] (stringify-row (map #(% good) COLUMNS_PARSERS)))
+
+(defn extract-goods-data [goods] (map extract-good-data goods))
 
 (defn select-items [html] (.select html ".dtList-inner"))
 
@@ -46,12 +76,12 @@
       Jsoup/connect
       .get))
 
-(defn get-discounts-for-brand
+(defn extract-brand-data
   [url]
   (try (-> url
            get-html
            select-items
-           extract-discounts)
+           extract-goods-data)
        (catch HttpStatusException _ '())))
 
 (defn build-url-with-page
@@ -66,7 +96,7 @@
 
 (defn extract-brands [query-map] (get query-map *brand-signature*))
 
-(defn get-discounts
+(defn extract-brands-data
   [url]
   (let [url (uri/parse url)
         brands (-> url
@@ -75,14 +105,15 @@
                    split-brands)]
     (loop [brands brands
            page INITIAL_PAGE
-           all-titles '()]
+           brands-data '()]
       (let [brand (first brands)
             brand-page-url (build-url-with-page url brand page)
-            titles (get-discounts-for-brand brand-page-url)]
-        (cond (all-brands-iterated? brands titles) all-titles
-              (brand-iterated? titles)
-                (recur (rest brands) INITIAL_PAGE (concat all-titles titles))
-              :else (recur brands (inc page) (concat all-titles titles)))))))
+            brand-data (extract-brand-data brand-page-url)]
+        (cond
+          (all-brands-iterated? brands brand-data) brands-data
+          (brand-iterated? brand-data)
+            (recur (rest brands) INITIAL_PAGE (concat brands-data brand-data))
+          :else (recur brands (inc page) (concat brands-data brand-data)))))))
 
 (defn define-brand-signature
   [url]
@@ -92,15 +123,25 @@
 
 (defn get-url [args] (get args "--url"))
 
+(defn print-prerequisites
+  []
+  (println
+    (str
+      "Для работы программы необходимо предоставить адрес каталога Wildberries параметром brand или fbrand."
+      "\n"
+      "Например, https://www.wildberries.ru/catalog/obuv/zhenskaya/sapogi?fbrand=16821;9465;20587;9974;15521;20250;11496;15852;30269.")))
+
 (defn -main
   [& args]
   (let [map-args (apply hash-map args)
         url (get-url map-args)]
-    (binding [*brand-signature* (define-brand-signature url)]
-      (if (and url *brand-signature*)
-        (->> url
-             get-discounts
-             (join GOODS_SEPARATOR)
-             println)
-        (println
-          "Для работы программы необходимо предоставить адрес каталога Wildberries. Например, https://www.wildberries.ru/catalog/obuv/zhenskaya/sapogi?fbrand=16821;9465;20587;9974;15521;20250;11496;15852;30269.")))))
+    (if url
+      (binding [*brand-signature* (define-brand-signature url)]
+        (if *brand-signature*
+          (->> url
+               extract-brands-data
+               (cons (stringify-row COLUMNS))
+               (join GOODS_SEPARATOR)
+               println)
+          (print-prerequisites)))
+      (print-prerequisites))))

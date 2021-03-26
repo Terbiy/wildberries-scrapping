@@ -1,5 +1,5 @@
-(defproject wildberries-scrapping "0.3.0"
-  :description "Выгрузка данных про скидки брендов с сайта Wildberries."
+(defproject wildberries-scrapping "0.4.0"
+  :description "Выгрузка данных товаров с сайта Wildberries."
   :license {:name "MIT", :url "https://mit-license.org/"}
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.jsoup/jsoup "1.13.1"]
