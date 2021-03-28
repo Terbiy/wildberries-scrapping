@@ -54,13 +54,16 @@
 
 (defn get-name [good] (get-property good ".goods-name"))
 
+(defn get-article [good] (.attr good "data-popup-nm-id"))
+
 (defn get-brand [good] (get-property good ".brand-name"))
 
 (def COLUMNS
-  ["Бренд" "Наименование" "Размер скидки" "Стоимость со скидкой" "Рейтинг"
-   "Количество отзывов"])
+  ["Бренд" "Артикул" "Наименование" "Размер скидки" "Стоимость со скидкой"
+   "Рейтинг" "Количество отзывов"])
 (def COLUMNS_PARSERS
-  [get-brand get-name get-discount get-price get-rating get-comments-number])
+  [get-brand get-article get-name get-discount get-price get-rating
+   get-comments-number])
 
 (defn stringify-row [data] (join PROPERTIES_SEPARATOR data))
 
@@ -68,7 +71,7 @@
 
 (defn extract-goods-data [goods] (map extract-good-data goods))
 
-(defn select-items [html] (.select html ".dtList-inner"))
+(defn select-items [html] (.select html ".dtList"))
 
 (defn get-html
   [url]

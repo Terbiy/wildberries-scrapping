@@ -1,4 +1,4 @@
-(defproject wildberries-scrapping "0.4.0"
+(defproject wildberries-scrapping "0.5.0"
   :description "Выгрузка данных товаров с сайта Wildberries."
   :license {:name "MIT", :url "https://mit-license.org/"}
   :dependencies [[org.clojure/clojure "1.10.1"]
