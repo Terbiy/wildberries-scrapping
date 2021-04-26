@@ -6,17 +6,15 @@
            (java.text SimpleDateFormat)
            (java.util Date)))
 
-(def ^:dynamic *brand-signature* :brand)
-
 (def PROPERTIES_SEPARATOR "\t")
 
 (def GOODS_SEPARATOR "\n")
 
-(defn brand-iterated? [titles] (empty? titles))
+(defn goods-pages-iterated? [goods] (empty? goods))
 
-(defn all-brands-iterated?
-  [brands titles]
-  (and (= (count brands) 1) (brand-iterated? titles)))
+(defn all-goods-pages-iterated?
+  [goods-pages goods]
+  (and (= (count goods-pages) 1) (goods-pages-iterated? goods)))
 
 (defn try-to-select [select] (try (select) (catch NullPointerException _ "")))
 
@@ -81,7 +79,7 @@
       Jsoup/connect
       .get))
 
-(defn extract-brand-data
+(defn extract-goods-page-data
   [url]
   (try (-> url
            get-html
@@ -89,42 +87,9 @@
            extract-goods-data)
        (catch HttpStatusException _ '())))
 
-(defn build-url-with-page
-  [url brand page]
-  (-> url
-      (uri/assoc-query *brand-signature* brand :page page)
-      .toString))
-
 (def INITIAL_PAGE 1)
 
 (defn split-brands [brands-string] (split brands-string #";"))
-
-(defn extract-brands [query-map] (get query-map *brand-signature*))
-
-(defn extract-brands-data
-  [url]
-  (let [url (uri/parse url)
-        brands (-> url
-                   uri/query-map
-                   extract-brands
-                   split-brands)]
-    (loop [brands brands
-           page INITIAL_PAGE
-           brands-data '()]
-      (let [brand (first brands)
-            brand-page-url (build-url-with-page url brand page)
-            brand-data (extract-brand-data brand-page-url)]
-        (cond
-          (all-brands-iterated? brands brand-data) brands-data
-          (brand-iterated? brand-data)
-            (recur (rest brands) INITIAL_PAGE (concat brands-data brand-data))
-          :else (recur brands (inc page) (concat brands-data brand-data)))))))
-
-(defn define-brand-signature
-  [url]
-  (cond (includes? url "fbrand") :fbrand
-        (includes? url "brand") :brand
-        :else nil))
 
 (defn get-url [args] (get args "--url"))
 
@@ -149,17 +114,70 @@
     (spit filename data-TSV)
     (println (str "Данные о скидках сохранены в файле " filename "."))))
 
+(defn build-goods-url-with-page
+  [url page]
+  (-> url
+      (uri/assoc-query :page page)
+      .toString))
+
+(defn extract-all-goods-data
+  [urls]
+  (loop [urls urls
+         page INITIAL_PAGE
+         all-goods-data '()]
+    (let [url (first urls)
+          goods-page-url (build-goods-url-with-page url page)
+          goods-page-data (extract-goods-page-data goods-page-url)]
+
+      (cond (all-goods-pages-iterated? urls goods-page-data) all-goods-data
+            (goods-pages-iterated? goods-page-data)
+              (recur (rest urls)
+                     INITIAL_PAGE
+                     (concat all-goods-data goods-page-data))
+            :else (recur urls
+                         (inc page)
+                         (concat all-goods-data goods-page-data))))))
+
+(defn build-url-with-single-brand
+  [url key brand]
+  (.toString (uri/assoc-query url key brand)))
+
+(defn build-urls-with-single-brand
+  [url brands-data]
+  (map (partial build-url-with-single-brand url (:key brands-data))
+    (:brands brands-data)))
+
+(defn split-url-by-brands
+  [query-map]
+  (cond (:brand query-map) {:key :brand,
+                            :brands (split-brands (:brand query-map))}
+        (:fbrand query-map) {:key :fbrand,
+                             :brands (split-brands (:fbrand query-map))}
+        :else {:key "", :brands []}))
+
+;; Разбиение полного адреса на отдельные адреса по каждому бренду необходимо
+;; из-за того, что выдача Wildberries ограничена 10 000 результатами.
+;; Наличие отдельных адресов для каждого бренда не исключает полностью
+;; проблему неучёта товаров, но существенно снижает риск её появления.
+;; Бренды с количеством элементов более 10 000 пока не были замечены.
+(defn split-into-separate-brands-urls
+  [url]
+  (let [build-urls-with-single-brand (partial build-urls-with-single-brand url)
+        brands-urls (-> url
+                        uri/query-map
+                        split-url-by-brands
+                        build-urls-with-single-brand)]
+    (if (not-empty brands-urls) brands-urls [url])))
+
 (defn -main
   [& args]
   (let [map-args (apply hash-map args)
         url (get-url map-args)]
     (if url
-      (binding [*brand-signature* (define-brand-signature url)]
-        (if *brand-signature*
-          (->> url
-               extract-brands-data
-               (cons (stringify-row COLUMNS))
-               (join GOODS_SEPARATOR)
-               extract-to-file)
-          (print-prerequisites)))
+      (->> url
+           split-into-separate-brands-urls
+           extract-all-goods-data
+           (cons (stringify-row COLUMNS))
+           (join GOODS_SEPARATOR)
+           extract-to-file)
       (print-prerequisites))))
