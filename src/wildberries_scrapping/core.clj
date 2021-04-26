@@ -2,7 +2,9 @@
   (:gen-class)
   (:require [clojure.string :refer [split join includes? trim] :as string]
             [lambdaisland.uri :as uri])
-  (:import (org.jsoup Jsoup HttpStatusException)))
+  (:import (org.jsoup Jsoup HttpStatusException)
+           (java.text SimpleDateFormat)
+           (java.util Date)))
 
 (def ^:dynamic *brand-signature* :brand)
 
@@ -134,6 +136,19 @@
       "\n"
       "Например, https://www.wildberries.ru/catalog/obuv/zhenskaya/sapogi?fbrand=16821;9465;20587;9974;15521;20250;11496;15852;30269.")))
 
+(defn get-date-time-for-file-name
+  []
+  (.format (SimpleDateFormat. "yyyyMMdd-HHmmss") (Date.)))
+
+(defn extract-to-file
+  [data-TSV]
+  (let [filename (str "./results/"
+                      "wildberries-scrapping-"
+                      (get-date-time-for-file-name)
+                      ".tsv")]
+    (spit filename data-TSV)
+    (println (str "Данные о скидках сохранены в файле " filename "."))))
+
 (defn -main
   [& args]
   (let [map-args (apply hash-map args)
@@ -145,6 +160,6 @@
                extract-brands-data
                (cons (stringify-row COLUMNS))
                (join GOODS_SEPARATOR)
-               println)
+               extract-to-file)
           (print-prerequisites)))
       (print-prerequisites))))
