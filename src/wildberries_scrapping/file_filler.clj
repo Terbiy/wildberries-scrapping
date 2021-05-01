@@ -16,13 +16,14 @@
   []
   (.format (SimpleDateFormat. EXCEL_FRIENDLY_DATE_FORMAT) (Date.)))
 
-(defn save-to-file
-  [data]
+(defn save-to-file!
+  [titles data]
   (let [filename (str "./results/"
                       "wildberries-scrapping-"
                       (get-date-time-for-file-name)
                       ".tsv")
         data-TSV (->> data
+                      (cons titles)
                       (map stringify-row)
                       (join GOODS_SEPARATOR))]
     (spit filename data-TSV)

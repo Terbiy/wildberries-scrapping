@@ -1,6 +1,10 @@
 (ns wildberries-scrapping.data-extractors
   (:require [clojure.string :as string]))
 
+(defn default-if-empty [default value] (if (empty? value) default value))
+
+(def default-integer-string-if-empty (partial default-if-empty "0"))
+
 (defn try-to-select [select] (try (select) (catch NullPointerException _ "")))
 
 (defn get-property
@@ -12,7 +16,11 @@
                       .toString
                       string/trim)))
 
-(defn get-comments-number [good] (get-property good ".dtList-comments-count"))
+(defn get-comments-number
+  [good]
+  (-> (get-property good ".dtList-comments-count")
+      default-integer-string-if-empty
+      Integer/parseInt))
 
 (defn extract-rating-value
   [classes]
@@ -24,18 +32,27 @@
 
 (defn get-rating
   [good]
-  (try-to-select #(-> good
-                      (.select "[itemprop=\"aggregateRating\"]")
-                      .first
-                      .classNames
-                      extract-rating-value)))
+  (let [default-float-string-value-if-empty (partial default-if-empty "0.0")]
+    (-> (try-to-select #(-> good
+                            (.select "[itemprop=\"aggregateRating\"]")
+                            .first
+                            .classNames
+                            extract-rating-value))
+        default-float-string-value-if-empty
+        Float/parseFloat)))
 
 (defn get-price
   [good]
   (-> (get-property good ".lower-price")
-      (string/replace #"(&nbsp;|₽)" "")))
+      (string/replace #"(&nbsp;|₽)" "")
+      Integer/parseInt))
 
-(defn get-discount [good] (get-property good ".price-sale"))
+(defn get-discount
+  [good]
+  (-> (get-property good ".price-sale")
+      (string/replace #"[-%]" "")
+      default-integer-string-if-empty
+      Integer/parseInt))
 
 (defn get-name [good] (get-property good ".goods-name"))
 
