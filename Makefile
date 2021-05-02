@@ -1,6 +1,5 @@
 IMAGE_NAME = german.tebiev/wildberries-scrapping:latest
-MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
-MAKEFILE_DIRECTORY := $(dir $(MAKEFILE_PATH))
+MAKEFILE_DIRECTORY := $(shell pwd)
 
 .PHONY: build
 build:
@@ -17,7 +16,7 @@ ifndef URL
 	@echo "Пример: make scrap URL=\"https://www.wildberries.ru/catalog/zhenshchinam/odezhda/bryuki-i-shorty?page=1&fbrand=6780;4134;564\"."
 else
 	docker run --rm \
-		--mount type=bind,src="$(MAKEFILE_DIRECTORY)results",dst="/usr/src/app/results" \
+		--mount type=bind,src="$(MAKEFILE_DIRECTORY)/results",dst="/usr/src/app/results" \
 		$(IMAGE_NAME) --url "$(URL)"
 endif
 

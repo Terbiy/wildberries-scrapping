@@ -25,7 +25,7 @@
   (map (partial build-url-with-single-brand url (:key brands-data))
     (:brands brands-data)))
 
-(defn prepare-urls-for-parsing
+(defn prepare-url-for-parsing
   "
   Разбиение полного адреса на отдельные адреса по каждому бренду необходимо
   из-за того, что выдача Wildberries ограничена 10 000 результатами.
@@ -40,6 +40,12 @@
                         split-url-by-brands
                         build-urls-with-single-brand)]
     (if (not-empty brands-urls) brands-urls [url])))
+
+(defn prepare-urls-for-parsing
+  [urls]
+  (->> (split urls #" ")
+       (map prepare-url-for-parsing)
+       flatten))
 
 (defn build-goods-url-with-page
   [url page]

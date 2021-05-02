@@ -42,12 +42,12 @@ make build
 
 Запуск инструмента для сохранения результатов в базу осуществляется после сборки следующей командой:
 ```shell
-make scrap URL="<адрес страницы Wildberries>"
+make scrap URL="<адрес страницы Wildberries или адреса через пробел>"
 ```
 
 Для сохранения результатов в файл используйте следующую команду:
 ```shell
-make scrap-to-file URL="<адрес страницы Wildberries>"
+make scrap-to-file URL="<адрес страницы Wildberries или адреса через пробел>"
 ```
 
 ## Пример
@@ -57,12 +57,16 @@ make scrap-to-file URL="<адрес страницы Wildberries>"
 На сайте товары располагаются по следующей ссылке: https://www.wildberries.ru/catalog/zhenshchinam/odezhda?fbrand=4126;2513;4130;65918.
 
 Команда запуска инструмента будет выглядеть следующим образом:
-
 ```shell
 make scrap-to-file URL="https://www.wildberries.ru/catalog/zhenshchinam/odezhda?fbrand=4126;2513;4130;65918"
 ```
 
 Результат сбора данных будет доступен в папке `results` в самом свежем файле.
+
+Запуск программы для нескольких адресов выглядит следующим образом:
+```shell
+make scrap-to-file URL="https://www.wildberries.ru/catalog/zhenshchinam/odezhda?fbrand=4126;2513;4130;65918 https://www.wildberries.ru/catalog/obuv/zhenskaya?page=1&fbrand=74915;7363;246"
+```
 
 ## Лицензия
 
