@@ -4,6 +4,7 @@
 (defn default-if-empty [default value] (if (empty? value) default value))
 
 (def default-integer-string-if-empty (partial default-if-empty "0"))
+(def default-float-string-value-if-empty (partial default-if-empty "0.0"))
 
 (defn try-to-select [select] (try (select) (catch NullPointerException _ "")))
 
@@ -32,14 +33,13 @@
 
 (defn get-rating
   [good]
-  (let [default-float-string-value-if-empty (partial default-if-empty "0.0")]
-    (-> (try-to-select #(-> good
-                            (.select "[itemprop=\"aggregateRating\"]")
-                            .first
-                            .classNames
-                            extract-rating-value))
-        default-float-string-value-if-empty
-        Float/parseFloat)))
+  (-> (try-to-select #(-> good
+                          (.select "[itemprop=\"aggregateRating\"]")
+                          .first
+                          .classNames
+                          extract-rating-value))
+      default-float-string-value-if-empty
+      Float/parseFloat))
 
 (defn get-price
   [good]
@@ -51,8 +51,9 @@
   [good]
   (-> (get-property good ".price-sale")
       (string/replace #"[-%]" "")
-      default-integer-string-if-empty
-      Integer/parseInt))
+      default-float-string-value-if-empty
+      Float/parseFloat
+      (/ 100)))
 
 (defn get-name [good] (get-property good ".goods-name"))
 
