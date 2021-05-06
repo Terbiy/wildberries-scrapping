@@ -1,0 +1,16 @@
+{
+ ;; Настройки для подключения к базе данных.
+ wildberries-scrapping.configuration/user "SA"
+ wildberries-scrapping.configuration/password "pFo#ZvM7M#yJBy"
+ wildberries-scrapping.configuration/database-name "Wildberries"
+ wildberries-scrapping.configuration/host "127.0.0.1"
+ wildberries-scrapping.configuration/port "1433"
+
+ ;; Настройки для проведения операции вставки в таблицу.
+ wildberries-scrapping.configuration/table-name #config/or [#config/env "WB_SCRAPPING_TABLE"
+                                                            ;; Имя таблицы.
+                                                            "wb_scrapping"]
+ ;; Ограничение на количество вставляемых за раз элементов.
+ ;; Их превышение приводит к ошибке SQL.
+ wildberries-scrapping.configuration/values-for-single-insert-limit 2100
+}

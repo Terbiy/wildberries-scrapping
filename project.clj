@@ -6,7 +6,8 @@
                  [org.jsoup/jsoup "1.13.1"]
                  [lambdaisland/uri "1.4.54"]
                  [com.github.seancorfield/next.jdbc "1.1.646"]
-                 [com.microsoft.sqlserver/mssql-jdbc "8.2.1.jre8"]]
+                 [com.microsoft.sqlserver/mssql-jdbc "8.2.1.jre8"]
+                 [com.outpace/config "0.13.5"]]
   :main ^:skip-aot wildberries-scrapping.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all,

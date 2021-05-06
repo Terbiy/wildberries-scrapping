@@ -3,7 +3,7 @@
             [next.jdbc.sql :as sql]
             [clojure.string :refer [join]]
 
-            [wildberries-scrapping.database-configuration :refer
+            [wildberries-scrapping.configuration :refer
              [connection-settings insertion-settings]])
 
   (:import (com.microsoft.sqlserver.jdbc SQLServerException)))

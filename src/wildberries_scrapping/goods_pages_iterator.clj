@@ -4,11 +4,7 @@
 
   (:import (org.jsoup Jsoup HttpStatusException)))
 
-(def MAXIMUM_NUMBER_OF_GOODS_PER_PAGE 100)
-
-(defn goods-pages-iterated?
-  [goods]
-  (< (count goods) MAXIMUM_NUMBER_OF_GOODS_PER_PAGE))
+(defn goods-pages-iterated? [goods] (empty? goods))
 
 (defn all-goods-pages-iterated?
   [goods-pages goods]
