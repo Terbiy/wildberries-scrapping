@@ -51,9 +51,8 @@
   [good]
   (-> (get-property good ".price-sale")
       (string/replace #"[-%]" "")
-      default-float-string-value-if-empty
-      Float/parseFloat
-      (/ 100)))
+      default-integer-string-if-empty
+      Integer/parseInt))
 
 (defn get-name [good] (get-property good ".goods-name"))
 
