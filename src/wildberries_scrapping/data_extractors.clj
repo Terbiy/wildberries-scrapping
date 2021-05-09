@@ -4,7 +4,7 @@
 
 (defn get-rating [good] (:rating good))
 
-(defn get-price [good] (:salePriceU good))
+(defn get-price [good] (/ (:salePriceU good) 100))
 
 (defn get-discount [good] (:sale good))
 
