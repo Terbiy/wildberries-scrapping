@@ -1,4 +1,4 @@
-(defproject wildberries-scrapping "0.11.0"
+(defproject wildberries-scrapping "0.12.0"
   :description "Выгрузка данных товаров с сайта Wildberries."
   :license {:name "MIT", :url "https://mit-license.org/"}
   :dependencies [[org.clojure/clojure "1.10.1"]
@@ -7,7 +7,8 @@
                  [lambdaisland/uri "1.4.54"]
                  [com.github.seancorfield/next.jdbc "1.1.646"]
                  [com.microsoft.sqlserver/mssql-jdbc "8.2.1.jre8"]
-                 [com.outpace/config "0.13.5"]]
+                 [com.outpace/config "0.13.5"]
+                 [org.clojure/data.json "2.2.2"]]
   :main ^:skip-aot wildberries-scrapping.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all,

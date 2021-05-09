@@ -1,44 +1,68 @@
 (ns wildberries-scrapping.goods-pages-iterator
-  (:require [wildberries-scrapping.urls-preparators :refer
+  (:require [clojure.string :refer [join]]
+            [clojure.data.json :as json]
+            [outpace.config :refer [defconfig]]
+
+            [wildberries-scrapping.urls-preparators :refer
              [build-goods-url-with-page]])
 
-  (:import (org.jsoup Jsoup HttpStatusException)))
+  (:import (org.jsoup Jsoup HttpStatusException)
+           (org.jsoup.nodes Document)))
 
-(defn goods-pages-iterated? [goods] (empty? goods))
+(defn- goods-pages-iterated? [goods] (empty? goods))
 
-(defn all-goods-pages-iterated?
+(defn- all-goods-pages-iterated?
   [goods-pages goods]
   (and (= (count goods-pages) 1) (goods-pages-iterated? goods)))
 
-(defn extract-good-data [column-parsers good] (map #(% good) column-parsers))
+(defn- extract-good-data [column-parsers good] (map #(% good) column-parsers))
 
-(defn extract-goods-data
+(defn- extract-goods-data
   [column-parsers goods]
   (let [extract-good-data (partial extract-good-data column-parsers)]
     (map extract-good-data goods)))
 
-(defn select-items [html] (.select html ".dtList"))
+(defconfig good-class)
+(defn- select-goods [html] (.select html good-class))
 
-(defn get-html
-  [url]
+(defn- get-html
+  ^Document [url]
   (-> url
       Jsoup/connect
       .get))
 
-(defn extract-goods-page-data
+(defconfig good-id-attribute)
+(defn- extract-good-ids [good] (.attr good good-id-attribute))
+
+(def ^:private extract-goods-ids (comp flatten (partial map extract-good-ids)))
+
+(defconfig data-url)
+(defn- download-additional-goods-data
+  [ids]
+  (-> (str data-url (join ";" ids))
+      get-html
+      .body
+      .text
+      (json/read-str :key-fn keyword)
+      :data
+      :products))
+
+(defn- extract-goods-page-data
   [column-parsers url]
   (println (str "Выгружаются данные со страницы " url "."))
 
   (let [extract-goods-data (partial extract-goods-data column-parsers)]
     (try (-> url
              get-html
-             select-items
+             select-goods
+             extract-goods-ids
+             download-additional-goods-data
              extract-goods-data)
          (catch HttpStatusException _ '()))))
 
-(def INITIAL_PAGE 1)
+(def ^:private INITIAL_PAGE 1)
 
-(defn extract-all-goods-data
+(defn- extract-all-goods-data
   [column-parsers urls]
   (loop [urls urls
          page INITIAL_PAGE

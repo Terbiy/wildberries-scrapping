@@ -13,4 +13,12 @@
  ;; Ограничение на количество вставляемых за раз элементов.
  ;; Их превышение приводит к ошибке SQL.
  wildberries-scrapping.configuration/values-for-single-insert-limit 2100
+
+ ;; Настройки для поиска информации на страницах Wildberries.
+ ;; Класс для определения отдельного HTML-элемента товара на странице Wildberries.
+ wildberries-scrapping.goods-pages-iterator/good-class ".dtList"
+ ;; Свойство HTML-элемента товара, содержащее его артикул/идентификатор.
+ wildberries-scrapping.goods-pages-iterator/good-id-attribute "data-popup-nm-id"
+  ;; Адрес каталога с JSON-информацией о товарах. Предполагает перечисление идентификаторов после `nm=`.
+ wildberries-scrapping.goods-pages-iterator/data-url "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?locale=ru&nm="
 }
