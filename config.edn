@@ -20,5 +20,5 @@
  ;; Свойство HTML-элемента товара, содержащее его артикул/идентификатор.
  wildberries-scrapping.goods-pages-iterator/good-id-attribute "data-popup-nm-id"
   ;; Адрес каталога с JSON-информацией о товарах. Предполагает перечисление идентификаторов после `nm=`.
- wildberries-scrapping.goods-pages-iterator/data-url "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?locale=ru&nm="
+ wildberries-scrapping.goods-pages-iterator/data-url "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?appType=1&locale=ru&nm="
 }
