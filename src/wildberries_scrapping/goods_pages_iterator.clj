@@ -62,6 +62,7 @@
 
 (def ^:private INITIAL_PAGE 1)
 
+(defconfig pause-between-requests)
 (defn- extract-all-goods-data
   [column-parsers urls]
   (loop [urls urls
@@ -72,7 +73,8 @@
           goods-page-data (extract-goods-page-data column-parsers
                                                    goods-page-url)
           updated-all-goods-data (concat all-goods-data goods-page-data)]
-
+      ;; Попытка избежать блокирование запросов к Wildberries.
+      (Thread/sleep (* 1000 pause-between-requests))
       (cond (all-goods-pages-iterated? urls goods-page-data)
               updated-all-goods-data
             (goods-pages-iterated? goods-page-data)

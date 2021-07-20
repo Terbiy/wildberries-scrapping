@@ -21,4 +21,7 @@
  wildberries-scrapping.goods-pages-iterator/good-id-attribute "data-popup-nm-id"
   ;; Адрес каталога с JSON-информацией о товарах. Предполагает перечисление идентификаторов после `nm=`.
  wildberries-scrapping.goods-pages-iterator/data-url "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?appType=1&locale=ru&nm="
+ ;; Пауза между запросами. Wildberries начал блокировать те, что кучей идут подряд.
+ ;; Эмпирически выявлено, что пауза в 5 секунд позволяет программе работать без преждевременного завершения.
+ wildberries-scrapping.goods-pages-iterator/pause-between-requests 5
 }
