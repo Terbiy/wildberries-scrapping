@@ -16,9 +16,9 @@
 
  ;; Настройки для поиска информации на страницах Wildberries.
  ;; Класс для определения отдельного HTML-элемента товара на странице Wildberries.
- wildberries-scrapping.goods-pages-iterator/good-class ".dtList"
+ wildberries-scrapping.goods-pages-iterator/good-class ".product-card"
  ;; Свойство HTML-элемента товара, содержащее его артикул/идентификатор.
- wildberries-scrapping.goods-pages-iterator/good-id-attribute "data-nm-id"
+ wildberries-scrapping.goods-pages-iterator/good-id-attribute "data-popup-nm-id"
   ;; Адрес каталога с JSON-информацией о товарах. Предполагает перечисление идентификаторов после `nm=`.
  wildberries-scrapping.goods-pages-iterator/data-url "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?appType=1&locale=ru&nm="
  ;; Пауза между запросами. Wildberries начал блокировать те, что кучей идут подряд.

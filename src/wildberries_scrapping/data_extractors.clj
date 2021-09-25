@@ -21,3 +21,14 @@
 (defn get-article [good] (:id good))
 
 (defn get-brand [good] (:brand good))
+
+(defn- get-one-size-stocks
+  [size]
+  (->> (:stocks size)
+       (reduce (fn [sum warehouse-data] (+ sum (:qty warehouse-data))) 0)))
+
+(defn get-stocks
+  [good]
+  (->> (:sizes good)
+       (map get-one-size-stocks)
+       (reduce +)))
