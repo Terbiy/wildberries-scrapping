@@ -16,7 +16,7 @@ MOUNT_CONFIG := --mount type=bind,src="$(MAKEFILE_DIRECTORY)/config.edn",dst="/u
 scrap-to-file:
 ifndef URL
 	@echo "Для запуска сборщика информации необходимо указать адрес."
-	@echo "Пример: make scrap URL=\"https://www.wildberries.ru/catalog/zhenshchinam/odezhda/bryuki-i-shorty?page=1&fbrand=6780;4134;564\"."
+	@echo "Пример: make scrap-to-file URL=\"https://www.wildberries.ru/catalog/zhenshchinam/odezhda/bryuki-i-shorty?page=1&fbrand=6780;4134;564\"."
 else
 	docker run --rm \
 		--mount type=bind,src="$(MAKEFILE_DIRECTORY)/results",dst="/usr/src/app/results" \
