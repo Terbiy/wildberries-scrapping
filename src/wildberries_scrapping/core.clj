@@ -22,7 +22,7 @@
     "Рейтинг"
     "Количество отзывов"
     "Остаток"))
-(def COLUMNS '(:brand :article :name :discount :price :rating :comments_number))
+(def COLUMNS '(:brand :article :name :discount :price :rating :comments_number :stocks))
 (def COLUMNS_PARSERS
   [get-brand get-article get-name get-discount get-price get-rating
    get-comments-number get-stocks])
