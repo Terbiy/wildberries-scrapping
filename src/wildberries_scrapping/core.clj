@@ -8,7 +8,7 @@
              [build-all-goods-data-extractor]]
             [wildberries-scrapping.data-extractors :refer
              [get-brand get-article get-name get-discount get-price get-rating
-              get-comments-number get-stocks]]
+              get-comments-number get-stocks get-exclusiveness]]
             [wildberries-scrapping.file-filler :refer [save-to-file!]]
             [wildberries-scrapping.database-filler :refer
              [connect-to-database! save-to-database!]]))
@@ -21,11 +21,16 @@
     "Стоимость со скидкой"
     "Рейтинг"
     "Количество отзывов"
-    "Остаток"))
-(def COLUMNS '(:brand :article :name :discount :price :rating :comments_number :stocks))
+    "Остаток"
+    "Эксклюзивно"))
+(def COLUMNS
+  '(:brand :article :name
+           :discount :price
+           :rating :comments_number
+           :stocks :exclusive))
 (def COLUMNS_PARSERS
   [get-brand get-article get-name get-discount get-price get-rating
-   get-comments-number get-stocks])
+   get-comments-number get-stocks get-exclusiveness])
 
 (defn print-prerequisites
   []
@@ -46,7 +51,7 @@
                extract-all-goods-data
                save-to-destination!))
 
-        (catch Exception exception (println (.getMessage exception)))))
+        (catch Exception exception (println exception))))
   ([url save-to-destination]
    (download-and-extract-data url #() save-to-destination)))
 
