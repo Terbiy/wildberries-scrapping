@@ -2,7 +2,7 @@
 <module cursive.leiningen.project.LeiningenProjectsManager.displayName="wildberries-scrapping:0.14.2" cursive.leiningen.project.LeiningenProjectsManager.isLeinModule="true" type="JAVA_MODULE" version="4">
   <component name="BuildSystem">
     <option name="buildSystemId" value="LEININGEN" />
-    <option name="displayName" value="wildberries-scrapping:0.15.0" />
+    <option name="displayName" value="wildberries-scrapping:0.16.0" />
   </component>
   <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/target/default/classes" />

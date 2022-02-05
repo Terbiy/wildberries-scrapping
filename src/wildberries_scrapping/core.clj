@@ -8,7 +8,7 @@
              [build-all-goods-data-extractor]]
             [wildberries-scrapping.data-extractors :refer
              [get-brand get-article get-name get-discount get-price get-rating
-              get-comments-number get-stocks get-exclusiveness]]
+              get-comments-number get-stocks get-promo get-new]]
             [wildberries-scrapping.file-filler :refer [save-to-file!]]
             [wildberries-scrapping.database-filler :refer
              [connect-to-database! save-to-database!]]))
@@ -22,15 +22,17 @@
     "Рейтинг"
     "Количество отзывов"
     "Остаток"
-    "Эксклюзивно"))
+    "Промо"
+    "Новинка"))
 (def COLUMNS
-  '(:brand :article :name
-           :discount :price
-           :rating :comments_number
-           :stocks :exclusive))
+  '(:brand :article
+           :name :discount
+           :price :rating
+           :comments_number :stocks
+           :promo :new))
 (def COLUMNS_PARSERS
   [get-brand get-article get-name get-discount get-price get-rating
-   get-comments-number get-stocks get-exclusiveness])
+   get-comments-number get-stocks get-promo get-new])
 
 (defn print-prerequisites
   []

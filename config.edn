@@ -1,27 +1,30 @@
-{
- ;; Настройки для подключения к базе данных.
- wildberries-scrapping.configuration/user "SA"
- wildberries-scrapping.configuration/password "pFo#ZvM7M#yJBy"
- wildberries-scrapping.configuration/database-name "Wildberries"
- wildberries-scrapping.configuration/host "127.0.0.1"
- wildberries-scrapping.configuration/port "1433"
+{;; Настройки для подключения к базе данных.
+ wildberries-scrapping.configuration/user "SA",
+ wildberries-scrapping.configuration/password "pFo#ZvM7M#yJBy",
+ wildberries-scrapping.configuration/database-name "Wildberries",
+ wildberries-scrapping.configuration/host "127.0.0.1",
+ wildberries-scrapping.configuration/port "1433",
 
  ;; Настройки для проведения операции вставки в таблицу.
- wildberries-scrapping.configuration/table-name #config/or [#config/env "WB_SCRAPPING_TABLE"
-                                                            ;; Имя таблицы.
-                                                            "wb_scrapping"]
+ wildberries-scrapping.configuration/table-name #config/or
+                                                 [#config/env
+                                                   "WB_SCRAPPING_TABLE"
+                                                  ;; Имя таблицы.
+                                                  "wb_scrapping"],
  ;; Ограничение на количество вставляемых за раз элементов.
  ;; Их превышение приводит к ошибке SQL.
- wildberries-scrapping.configuration/values-for-single-insert-limit 2100
-
+ wildberries-scrapping.configuration/values-for-single-insert-limit 2100,
  ;; Настройки для поиска информации на страницах Wildberries.
- ;; Класс для определения отдельного HTML-элемента товара на странице Wildberries.
- wildberries-scrapping.goods-pages-iterator/good-class ".product-card"
+ ;; Класс для определения HTML-элемента товара на странице Wildberries.
+ wildberries-scrapping.goods-pages-iterator/good-class ".product-card",
  ;; Свойство HTML-элемента товара, содержащее его артикул/идентификатор.
- wildberries-scrapping.goods-pages-iterator/good-id-attribute "data-popup-nm-id"
-  ;; Адрес каталога с JSON-информацией о товарах. Предполагает перечисление идентификаторов после `nm=`.
- wildberries-scrapping.goods-pages-iterator/data-url "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?appType=1&locale=ru&nm="
- ;; Пауза между запросами. Wildberries начал блокировать те, что кучей идут подряд.
- ;; Эмпирически выявлено, что пауза в 5 секунд позволяет программе работать без преждевременного завершения.
- wildberries-scrapping.goods-pages-iterator/pause-between-requests 5
-}
+ wildberries-scrapping.goods-pages-iterator/good-id-attribute
+   "data-popup-nm-id",
+ ;; Адрес каталога с JSON-информацией о товарах. Предполагает перечисление
+ ;; идентификаторов после `nm=`.
+ wildberries-scrapping.goods-pages-iterator/data-url
+   "https://wbxcatalog-ru.wildberries.ru/nm-2-card/catalog?appType=1&locale=ru&stores=117673,122258,122259,125238,125239,125240,507,3158,117501,120602,120762,6158,121709,124731,130744,159402,2737,117986,1733,686,132043&nm=",
+ ;; Пауза между запросами. Wildberries начал блокировать те, что кучей идут
+ ;; подряд. Эмпирически выявлено, что пауза в 5 секунд позволяет программе
+ ;; работать без преждевременного завершения.
+ wildberries-scrapping.goods-pages-iterator/pause-between-requests 5}

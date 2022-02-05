@@ -33,4 +33,6 @@
        (map get-one-size-stocks)
        (reduce +)))
 
-(defn get-exclusiveness [good] (if (= (:promoTextCat good) "Эксклюзивно") 1 0))
+(defn get-promo [good] (:promoTextCat good))
+
+(defn get-new [good] (if (:isNew good) 1 0))
